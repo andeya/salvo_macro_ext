@@ -1,0 +1,21 @@
+[package]
+name = "salvo_macro_ext"
+version = "0.1.0"
+edition = "2021"
+authors = ["Andeya Lee <andeyalee@outlook.com>"]
+license = "MIT"
+homepage = "https://github.com/andeya/salvo_macro_ext"
+repository = "https://github.com/andeya/salvo_macro_ext"
+readme = "README.md"
+keywords = ["http", "async", "web", "framework", "server"]
+categories = [
+    "web-programming::http-server",
+    "web-programming::websocket",
+    "network-programming",
+    "asynchronous",
+]
+
+[lib]
+proc-macro = true
+
+[dependencies]
