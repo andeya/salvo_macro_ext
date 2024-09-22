@@ -12,6 +12,13 @@ Unofficial extension macros for the salvo web framework.
 
 ## Example
 
+```toml
+[dependencies]
+salvo_macro_ext = "0.1"
+salvo = { version = "0.72", features = ["oapi"] }
+tokio = "1"
+```
+
 ```rust
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
