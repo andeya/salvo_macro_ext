@@ -2,6 +2,10 @@
 
 Unofficial extension macros for the salvo web framework.
 
+[![Crates.io](https://img.shields.io/crates/v/salvo_macro_ext)](https://crates.io/crates/salvo_macro_ext)
+[![Documentation](https://shields.io/docsrs/salvo_macro_ext)](https://docs.rs/salvo_macro_ext)
+[![License](https://img.shields.io/crates/l/salvo_macro_ext)](https://github.com/andeya/salvo_macro_ext?tab=MIT-1-ov-file)
+
 ## Features
 
 -   Support converting multiple methods into handlers ([salvo issue #919](https://github.com/salvo-rs/salvo/issues/919))
