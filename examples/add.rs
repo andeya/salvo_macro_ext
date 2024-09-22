@@ -1,14 +1,3 @@
-# salvo_macro_ext
-
-Unofficial extension macros for the salvo web framework.
-
-## Features
-
--   Support converting multiple methods into handlers ([salvo issue #919](https://github.com/salvo-rs/salvo/issues/919))
-
-## Example
-
-```rust
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
 use salvo_macro_ext::module;
@@ -21,6 +10,10 @@ async fn main() {
         .push(Router::with_path("add1").get(service.add1()))
         .push(Router::with_path("add2").get(service.add2()))
         .push(Router::with_path("add3").get(Service::add3()));
+    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
@@ -37,13 +30,13 @@ impl Service {
     }
     /// doc line 1
     /// doc line 2
-    #[salvo_macro_ext::module(handler)]
+    #[salvo_macro_ext::module(endpoint)]
     fn add1(&self, left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
         (self.state + *left + *right).to_string()
     }
     /// doc line 3
     /// doc line 4
-    #[module(handler)]
+    #[module(endpoint)]
     pub(crate) fn add2(
         self: ::std::sync::Arc<Self>,
         left: QueryParam<i64, true>,
@@ -53,13 +46,12 @@ impl Service {
     }
     /// doc line 5
     /// doc line 6
-    #[module(handler)]
+    #[module(endpoint(
+        responses(
+            (status_code = 400, description = "Wrong request parameters.")
+        )
+    ))]
     pub fn add3(left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
         (*left + *right).to_string()
     }
 }
-```
-
-Sure, you can also replace `#[module(handler)]` with `#[module(endpoint(...))]`.
-
-NOTE: If the receiver of a method is `&self`, you need to implement the `Clone` trait for the type.
