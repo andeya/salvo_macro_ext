@@ -1,4 +1,4 @@
-//! Unofficial extension macros for the [salvo](https://github.com/salvo-rs/salvo) web framework.
+//! Unofficial extension macros for the [Salvo web framework](https://github.com/salvo-rs/salvo).
 
 mod module;
 mod utils;

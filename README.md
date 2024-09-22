@@ -1,6 +1,6 @@
 # salvo_macro_ext
 
-Unofficial extension macros for the [salvo](https://github.com/salvo-rs/salvo) web framework.
+Unofficial extension macros for the [Salvo web framework](https://github.com/salvo-rs/salvo).
 
 [![Crates.io](https://img.shields.io/crates/v/salvo_macro_ext)](https://crates.io/crates/salvo_macro_ext)
 [![Documentation](https://shields.io/docsrs/salvo_macro_ext)](https://docs.rs/salvo_macro_ext)
