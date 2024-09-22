@@ -30,7 +30,7 @@ impl Service {
     }
     /// doc line 1
     /// doc line 2
-    #[salvo_macro_ext::module(endpoint)]
+    #[salvo_macro_ext::module(handler)]
     fn add1(&self, left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
         (self.state + *left + *right).to_string()
     }

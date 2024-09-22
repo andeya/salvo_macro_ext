@@ -34,21 +34,25 @@ fn take_method_macro(item_fn: &mut ImplItemFn) -> syn::Result<Option<Attribute>>
             continue;
         }
         if let Some((_, last)) = attr.to_token_stream().to_string().split_once("module(") {
-            let last = last.strip_suffix(")]");
-            if last.is_none() {
-                continue;
+            if let Some(last) = last.strip_suffix(")]") {
+                let ts: Option<TokenStream> = if last == "handler" || last.starts_with("handler(") {
+                    Some(format!("#[{}::{last}]", salvo_crate()).parse()?)
+                } else if last == "endpoint" || last.starts_with("endpoint(") {
+                    Some(format!("#[{}::oapi::{last}]", salvo_crate()).parse()?)
+                } else {
+                    None
+                };
+                if let Some(ts) = ts {
+                    new_attr = Attribute::parse_outer.parse2(ts)?.into_iter().next();
+                    index = Some(idx);
+                    continue;
+                }
             }
-            let last = last.unwrap();
-            let ts: TokenStream = if last == "handler" || last.starts_with("handler(") {
-                format!("#[{}::{last}]", salvo_crate()).parse()?
-            } else if last == "endpoint" || last.starts_with("endpoint(") {
-                format!("#[{}::oapi::{last}]", salvo_crate()).parse()?
-            } else {
-                continue;
-            };
-            new_attr = Attribute::parse_outer.parse2(ts)?.into_iter().next();
-            index = Some(idx);
         }
+        return Err(syn::Error::new_spanned(
+                item_fn,
+                "The attribute macro #[module] on a method must be filled with sub-attributes, such as '#[module(handler)]', '#[module(endpoint)]', or '#[module(endpoint(...))]'.",
+        ));
     }
     if let Some(index) = index {
         item_fn.attrs.remove(index);
