@@ -15,9 +15,7 @@ pub(crate) fn generate(input: Item) -> syn::Result<TokenStream> {
             }
             Ok(item_impl.into_token_stream())
         }
-        Item::Fn(_) => {
-            return Ok(input.into_token_stream());
-        }
+        Item::Fn(_) => Ok(input.into_token_stream()),
         _ => Err(syn::Error::new_spanned(
             input,
             "#[module] must added to `impl`",
