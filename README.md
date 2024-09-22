@@ -1,6 +1,6 @@
 # salvo_macro_ext
 
-Unofficial extension macros for the salvo web framework.
+Unofficial extension macros for the [salvo](https://github.com/salvo-rs/salvo) web framework.
 
 [![Crates.io](https://img.shields.io/crates/v/salvo_macro_ext)](https://crates.io/crates/salvo_macro_ext)
 [![Documentation](https://shields.io/docsrs/salvo_macro_ext)](https://docs.rs/salvo_macro_ext)
@@ -18,6 +18,10 @@ salvo_macro_ext = "0.1"
 salvo = { version = "0.72", features = ["oapi"] }
 tokio = "1"
 ```
+
+### `#[module]`
+
+`#[module]` is an attribute macro used to batch convert methods in an `impl` block into [`Salvo`'s `Handler`](https://github.com/salvo-rs/salvo).
 
 ```rust
 use salvo::oapi::extract::*;

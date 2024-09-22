@@ -1,4 +1,4 @@
-//! Unofficial extension macros for the salvo web framework.
+//! Unofficial extension macros for the [salvo](https://github.com/salvo-rs/salvo) web framework.
 
 mod module;
 mod utils;
@@ -6,7 +6,7 @@ mod utils;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, Item};
 
-/// `module` is a macro to help create `Handler` in batches from impl block easily.
+/// `#[module]` is an attribute macro used to batch convert methods in an `impl` block into [`Salvo`'s `Handler`](https://github.com/salvo-rs/salvo).
 ///
 /// ## Example
 /// ```
