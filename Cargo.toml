@@ -22,13 +22,9 @@ proc-macro = true
 
 [dependencies]
 proc-macro-crate = { version = ">= 2, <= 4" }
-proc-macro2-diagnostics = "0.10"
 proc-macro2 = "1"
 quote = "1"
-regex = "1"
 syn = { version = "2", features = ["full", "parsing"] }
-salvo_macros = "0.72"
-salvo-oapi-macros = "0.72"
 
 [dev-dependencies]
 salvo = { version = "0.72", features = ["oapi"] }
