@@ -1,38 +1,38 @@
 //! Unofficial extension macros for the [Salvo web framework](https://github.com/salvo-rs/salvo).
 
-mod module;
+mod craft;
 mod utils;
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, Item};
+use syn::{ parse_macro_input, Item };
 
-/// `#[module]` is an attribute macro used to batch convert methods in an `impl` block into [`Salvo`'s `Handler`](https://github.com/salvo-rs/salvo).
+/// `#[craft]` is an attribute macro used to batch convert methods in an `impl` block into [`Salvo`'s `Handler`](https://github.com/salvo-rs/salvo).
 ///
 /// ## Example
 /// ```
 /// use salvo::oapi::extract::*;
 /// use salvo::prelude::*;
-/// use salvo_macro_ext::module;
+/// use salvo_macro_ext::craft;
 ///
 /// #[derive(Clone)]
 /// pub struct Service {
 ///     state: i64,
 /// }
 ///
-/// #[module]
+/// #[craft]
 /// impl Service {
 ///     fn new(state: i64) -> Self {
 ///         Self { state }
 ///     }
 ///     /// doc line 1
 ///     /// doc line 2
-///     #[salvo_macro_ext::module(handler)]
+///     #[salvo_macro_ext::craft(handler)]
 ///     fn add1(&self, left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
 ///         (self.state + *left + *right).to_string()
 ///     }
 ///     /// doc line 3
 ///     /// doc line 4
-///     #[module(handler)]
+///     #[craft(handler)]
 ///     pub(crate) fn add2(
 ///         self: ::std::sync::Arc<Self>,
 ///         left: QueryParam<i64, true>,
@@ -42,19 +42,19 @@ use syn::{parse_macro_input, Item};
 ///     }
 ///     /// doc line 5
 ///     /// doc line 6
-///     #[module(handler)]
+///     #[craft(handler)]
 ///     pub fn add3(left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
 ///         (*left + *right).to_string()
 ///     }
 /// }
 /// ```
-/// Sure, you can also replace `#[module(handler)]` with `#[module(endpoint(...))]`.
+/// Sure, you can also replace `#[craft(handler)]` with `#[craft(endpoint(...))]`.
 ///
 /// NOTE: If the receiver of a method is `&self`, you need to implement the `Clone` trait for the type.
 #[proc_macro_attribute]
-pub fn module(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn craft(_args: TokenStream, input: TokenStream) -> TokenStream {
     let item = parse_macro_input!(input as Item);
-    match module::generate(item) {
+    match craft::generate(item) {
         Ok(stream) => stream.into(),
         Err(e) => e.to_compile_error().into(),
     }

@@ -1,6 +1,6 @@
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
-use salvo_macro_ext::module;
+use salvo_macro_ext::craft;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -23,34 +23,30 @@ pub struct Service {
     state: i64,
 }
 
-#[module]
+#[craft]
 impl Service {
     fn new(state: i64) -> Self {
         Self { state }
     }
     /// doc line 1
     /// doc line 2
-    #[salvo_macro_ext::module(handler)]
+    #[salvo_macro_ext::craft(handler)]
     fn add1(&self, left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
         (self.state + *left + *right).to_string()
     }
     /// doc line 3
     /// doc line 4
-    #[module(endpoint)]
+    #[craft(endpoint)]
     pub(crate) fn add2(
         self: ::std::sync::Arc<Self>,
         left: QueryParam<i64, true>,
-        right: QueryParam<i64, true>,
+        right: QueryParam<i64, true>
     ) -> String {
         (self.state + *left + *right).to_string()
     }
     /// doc line 5
     /// doc line 6
-    #[module(endpoint(
-        responses(
-            (status_code = 400, description = "Wrong request parameters.")
-        )
-    ))]
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
     pub fn add3(left: QueryParam<i64, true>, right: QueryParam<i64, true>) -> String {
         (*left + *right).to_string()
     }

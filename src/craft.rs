@@ -1,8 +1,17 @@
 use crate::utils::salvo_crate;
-use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens};
+use proc_macro2::{ Span, TokenStream };
+use quote::{ quote, ToTokens };
 use syn::{
-    parse::Parser, parse_quote, Attribute, FnArg, Ident, ImplItem, ImplItemFn, Item, Token, Type,
+    parse::Parser,
+    parse_quote,
+    Attribute,
+    FnArg,
+    Ident,
+    ImplItem,
+    ImplItemFn,
+    Item,
+    Token,
+    Type,
 };
 
 pub(crate) fn generate(input: Item) -> syn::Result<TokenStream> {
@@ -10,16 +19,13 @@ pub(crate) fn generate(input: Item) -> syn::Result<TokenStream> {
         Item::Impl(mut item_impl) => {
             for item in &mut item_impl.items {
                 if let ImplItem::Fn(method) = item {
-                    rewrite_method(item_impl.self_ty.clone(), method)?
+                    rewrite_method(item_impl.self_ty.clone(), method)?;
                 }
             }
             Ok(item_impl.into_token_stream())
         }
         Item::Fn(_) => Ok(input.into_token_stream()),
-        _ => Err(syn::Error::new_spanned(
-            input,
-            "#[module] must added to `impl`",
-        )),
+        _ => Err(syn::Error::new_spanned(input, "#[craft] must added to `impl`")),
     }
 }
 
@@ -27,13 +33,15 @@ fn take_method_macro(item_fn: &mut ImplItemFn) -> syn::Result<Option<Attribute>>
     let mut index: Option<usize> = None;
     let mut new_attr: Option<Attribute> = None;
     for (idx, attr) in &mut item_fn.attrs.iter().enumerate() {
-        if !match attr.path().segments.last() {
-            Some(segment) => segment.ident.to_string() == "module",
-            None => false,
-        } {
+        if
+            !(match attr.path().segments.last() {
+                Some(segment) => segment.ident.to_string() == "craft",
+                None => false,
+            })
+        {
             continue;
         }
-        if let Some((_, last)) = attr.to_token_stream().to_string().split_once("module(") {
+        if let Some((_, last)) = attr.to_token_stream().to_string().split_once("craft(") {
             if let Some(last) = last.strip_suffix(")]") {
                 let ts: Option<TokenStream> = if last == "handler" || last.starts_with("handler(") {
                     Some(format!("#[{}::{last}]", salvo_crate()).parse()?)
@@ -49,10 +57,12 @@ fn take_method_macro(item_fn: &mut ImplItemFn) -> syn::Result<Option<Attribute>>
                 }
             }
         }
-        return Err(syn::Error::new_spanned(
+        return Err(
+            syn::Error::new_spanned(
                 item_fn,
-                "The attribute macro #[module] on a method must be filled with sub-attributes, such as '#[module(handler)]', '#[module(endpoint)]', or '#[module(endpoint(...))]'.",
-        ));
+                "The attribute macro #[craft] on a method must be filled with sub-attributes, such as '#[craft(handler)]', '#[craft(endpoint)]', or '#[craft(endpoint(...))]'."
+            )
+        );
     }
     if let Some(index) = index {
         item_fn.attrs.remove(index);
@@ -80,10 +90,12 @@ impl MethodStyle {
                 if ty.ends_with("::Arc<Self>") {
                     Ok(Self::ArcSelf)
                 } else {
-                    Err(syn::Error::new_spanned(
-                        method,
-                        "#[module] method receiver must be '&self', 'Arc<Self>' or '&Arc<Self>'",
-                    ))
+                    Err(
+                        syn::Error::new_spanned(
+                            method,
+                            "#[craft] method receiver must be '&self', 'Arc<Self>' or '&Arc<Self>'"
+                        )
+                    )
                 }
             }
         }
@@ -96,7 +108,7 @@ fn rewrite_method(self_ty: Box<Type>, method: &mut ImplItemFn) -> syn::Result<()
     };
     method.sig.asyncness = Some(Token![async](Span::call_site()));
     let salvo = salvo_crate();
-    let handler = quote! (#salvo::Handler);
+    let handler = quote!(#salvo::Handler);
     let method_name = method.sig.ident.clone();
     let vis = method.vis.clone();
     let mut attrs = method.attrs.clone();
